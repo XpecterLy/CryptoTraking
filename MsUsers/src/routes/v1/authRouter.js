@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const { register, login } = require('../../controllers/authControler');
+const {checkAuth, verifyToken} = require('../../middleware/authMiddleware');
+const { checkRolAuth } = require('../../middleware/roleAuth');
 
 const schemaRegister = Joi.object({
     firstName:Joi.string().min(2).max(30).required(),
@@ -20,7 +22,7 @@ const validateRegister = (req, res, next) => {
     next();
 };
 
-router.post('/register', validateRegister, register);
+router.post('/register', checkAuth, verifyToken, checkRolAuth(["admin"]), validateRegister, register);
 router.post('/login', login);
 
 module.exports = router;
