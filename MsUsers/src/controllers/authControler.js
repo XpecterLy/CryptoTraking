@@ -1,4 +1,4 @@
-const {registerUser, loginAuth, encryptPassword, comparePassword, createToken} = require('../services/authService')
+const {registerUser, loginAuth, comparePassword, createToken} = require('../services/authService')
 
 const register = async (req, res) => {
     const { 
@@ -11,16 +11,12 @@ const register = async (req, res) => {
     } = req.body;
 
     try {
-         const hashedPassword = await encryptPassword(password)
-    
         var createUserJson = {
             firstName: firstName,
             lastName: lastName,
-            password: hashedPassword,
+            password: password,
             identificationNumber: identificationNumber,
             birthDate: birthDate,
-            createDate: getDateNow(),
-            updateDate: getDateNow(),
             activate: true,
             rol: rol
         }
@@ -64,21 +60,6 @@ const login = async (req, res) => {
     } catch (error) {
         console.error(error.message);
         res.status(500).send({message: error.message});
-    }
-}
-
-const getDateNow = () => {
-    try {
-        let dateNow = new Date();
-
-        let year = dateNow.getFullYear();
-        let month = String(dateNow.getMonth() + 1).padStart(2, '0'); // Se agrega 1 al mes ya que los meses van de 0 a 11
-        let day = String(dateNow.getDate()).padStart(2, '0');
-    
-        return `${year}-${month}-${day}`;
-    } catch (error) {
-        console.error(error.message);
-        throw { message: `Error when trying to get current date`, code: 500 }
     }
 }
 
