@@ -10,7 +10,7 @@ const schemaRegister = Joi.object({
     firstName:Joi.string().min(2).max(30).required(),
     lastName: Joi.string().min(2).max(30).required(),
     password: Joi.string().min(8).max(20).required(),
-    identificationNumber: Joi.number().min(7).max(10).required(),
+    identificationNumber: Joi.number().min(1000000).max(9000000000).required(),
     birthDate: Joi.string().min(10).max(10).required(),
     rol: Joi.string().required().valid('admin', 'user'),
 });

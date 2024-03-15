@@ -1,6 +1,5 @@
 const {registerUser} = require('../services/authService')
-const {GetUserByIdUser, GetUserByIdentificationNumber} = require('../services/userService')
-
+const {GetUserByIdUser, GetUserByIdentificationNumber, SearchAllUser, PatchRegisterUser, DeleteRegisterUser} = require('../services/userService')
 
 const RegisterUser = async (req, res) => {
     const { 
@@ -25,7 +24,7 @@ const RegisterUser = async (req, res) => {
         await registerUser(createUserJson)
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-        console.log(`Code erro: ${error.code}`);
+        console.log(error.code, error.message);
         
         // Validate if error is duplicate parameter identificationNumber
         if (error.code === 11000) {
@@ -55,8 +54,7 @@ const GetUser = async (req, res) => {
             return res.status(200).send(user)
         }
     } catch (error) {
-        console.log(error.code);
-        console.log(error.message);
+        console.log(error.code, error.message);
         if(error.code === 404){
             return res.status(error.code).send({message: error.message})
         }else{
@@ -65,17 +63,55 @@ const GetUser = async (req, res) => {
     }
 }
 
-const GetAllUser = (req, res) => {
-    res.status(200).json()
+const GetAllUser = async (req, res) => {
+    try {
+        const {rol, activate} = req.query;
+        const user = await SearchAllUser(rol, activate);
+        res.status(200).json(user)
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).send({message: error.message});
+    }
 }
 
-const UpdateUser = (req, res) => {
-    res.status(200).json()
+const PatchUser = async (req, res) => {
+    try {
+        const {userId} = req.query;
+        const userData = { 
+            firstName, 
+            lastName, 
+            password, 
+            identificationNumber, 
+            birthDate,
+            activate
+        } = req.body;
+        await PatchRegisterUser(userId, userData)
+        res.status(200).json();
+    } catch (error) {
+        console.log(error.code, error.message);
+        if(error.code === 404 || error.code === 404){
+            res.status(error.code).json({message: error.message});
+        }else{
+            res.status(500).json({message: error.message});
+        }
+    }
 }
 
-const DeleteUser = (req, res) => {
-    res.status(200).json()
+const DeleteUser = async (req, res) => {
+    try {
+        const {userId} = req.query;
+
+        await DeleteRegisterUser(userId)
+    
+        res.status(200).json();
+    } catch (error) {
+        console.log(error.code, error.message);
+        if(error.code === 404 || error.code === 404){
+            res.status(error.code).json({message: error.message});
+        }else{
+            res.status(500).json({message: error.message});
+        }
+    }
 }
 
-
-module.exports = { RegisterUser, GetUser, GetAllUser, UpdateUser, DeleteUser }
+module.exports = { RegisterUser, GetUser, GetAllUser, PatchUser, DeleteUser }

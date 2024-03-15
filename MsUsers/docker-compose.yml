@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  crypto_trakin_ms_user_image:
+    container_name: crypto_trakin_ms_user
+    restart: always
+    build: .
+    ports:
+      - "8000:8000"
+    links:
+      - crypto_trakin_db_image
+  crypto_trakin_db_image:
+    container_name: crypto_trakin_db
+    image: mongo
+    ports:
+      - "2718:2717"
+    logging: 
+      driver: none

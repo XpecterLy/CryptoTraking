@@ -3,9 +3,7 @@ const app = express();
 require('dotenv').config()
 const { routesV1 } = require('./src/routes/routes');
 const connectToDatabase = require('./src/config/db')
-const {registerUser, getDateNow} = require('./src/services/authService')
-
-
+const {registerUser} = require('./src/services/authService')
 
 app.use(express.json());
 connectToDatabase();
@@ -15,6 +13,8 @@ routesV1(app);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    
+    // Crear usuario root en caso de que no exista
     createUserAdminIfNotExist();
 });
 
